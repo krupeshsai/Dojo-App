@@ -1,6 +1,5 @@
 import React, { useEffect }  from "react";
 import { useState } from "react";
-// import BlogList from "./blogList";
 import Blogs from "./blogs";
 
 
@@ -9,29 +8,39 @@ const Home = () => {
 
    
     const [list , setlist] = useState(null);
+    const [isPending, setIspending] = useState(true)
+    const [error , setError] = useState(null)
+
    
 
-    const handleRemove = (id) => {
-        const newList = list.filter((blog)=> blog.id !== id);
-      setlist(newList);
-       
-    }
-
     useEffect(() => {
+      setTimeout(()=>{
         fetch('http://localhost:5000/content')
-          .then(res => {
-            return res.json();
-          })
-          .then(data => {
-            setlist(data);
-          })
+        .then(res => {
+          if(!res.ok){
+            throw Error("could not fetch the data")
+          }
+          return res.json();
+        })
+        .then(data => {
+          setlist(data);
+          setIspending(false);
+          setError(null)
+        })
+        .catch(err =>{
+          setIspending(false)
+          setError(err.message)
+        })
+      },1000)
+      
       }, [])
     
 
 return (
     <>
         <div className="content">
-        
+        {error && <div>{error}</div>}
+        {isPending && <div>Loding...</div>}
         {list && list.map(blog=>
             <Blogs 
             key = {blog.id}
@@ -39,7 +48,6 @@ return (
             title={blog.title}
             author ={blog.author}
             description ={blog.description}
-            onRemove={handleRemove}
             />
         )}
         </div>
@@ -56,31 +64,3 @@ export default Home;
 
 
 
-// return ( <>
-//     <div className="home">
-//       {list.map(blog => (
-//         <div className="blog-preview"
-//          key={blog.id} >
-//           <h2>{ blog.title }</h2>
-//           <h5>Written by {blog.author}</h5>
-//           <br/>
-//           <p>{ blog.description }</p>
-//           <br/>
-//           <button  onClick={()=> handleRemove(blog.id)}>Remove</button>
-//         </div>
-//       ))}
-//     </div>
-//     </> );
-
-
-//   {/* { list && list.map(blog=> 
-//             <Blogs
-//             key = {blog.id}
-//             id ={blog.id}
-//             title={blog.title}
-//             author ={blog.author}
-//             description ={blog.description}
-//             onRemove={handleRemove}
-//             />
-//             )} 
-//                 */}

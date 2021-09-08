@@ -1,8 +1,5 @@
 const Blogs = (props) => {
 
-const deleteBlog = () =>{
-   props.onRemove(props.id)
-}
 
     return ( <>
          
@@ -13,9 +10,8 @@ const deleteBlog = () =>{
               <p>{props.description}</p>
               <p>{props.id}</p>
               <br/>
-              <button type="button" onClick={deleteBlog}>
-            Remove
-          </button>
+              
+        
           </div>
           </div>
     </> );
